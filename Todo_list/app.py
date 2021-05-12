@@ -14,7 +14,36 @@ class Todos(db.Model):
 
 @app.route('/')
 def index():
-    return "This is a TODO list!"
+    all_todos = Todos.query.all()
+    todos_string = ""
+    for todo in all_todos:
+        todos_string += "<br>" + str(todo_id) + todo.task + str(todo.complete)
+    return todos_string 
+
+@app.route("/add")
+def add():
+    new_todo = Todos(task="New Todo")
+    db.session.add(new_todo)
+    db.session.commit()
+    return new_todo.task
+
+@app.route("/complete/<int:todo_id>")
+def complete(todo_id):
+    todo = Todos.query.get(todo_id)
+    todo.complete = True
+    db.session.commit()
+    return "completed Todo"
+
+@app.route("/incomplete/<int:todo_id>")
+def incomplete(todo_id):
+    todo = Todos.query.get(todo_id)
+    todo.complete = False
+    db.session.commit()
+    return "Incompleted Todo"
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True,)
